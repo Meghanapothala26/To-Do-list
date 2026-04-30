@@ -1,58 +1,50 @@
 function addtask() {
     const input = document.getElementById("todo-task");
-    const value = input.value;
+    const value = input.value.trim();
 
-    // Check empty FIRST
     if (value === "") {
         alert("please enter a task");
         return;
     }
 
-    const newtask = document.createElement("li");
-    newtask.textContent = value;
+    // create task in UI
+    createTaskElement(value);
 
-    const list = document.getElementById("lists");
-    list.appendChild(newtask);
-
-    // Save to localStorage
+    // save to localStorage
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     tasks.push(value);
     localStorage.setItem("tasks", JSON.stringify(tasks));
 
-    // Add delete button
-    deletetask(newtask);
-
-    // Clear input
     input.value = "";
 }
 
 
-function deletetask(newtask) {
+function createTaskElement(value) {
+    const li = document.createElement("li");
+    li.textContent = value;
+
     const deletebtn = document.createElement("button");
     deletebtn.textContent = "Delete";
 
     deletebtn.onclick = function () {
-        newtask.remove();
+        li.remove();
 
-        // Remove from localStorage
+        // remove from localStorage
         let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        tasks = tasks.filter(t => t !== newtask.textContent);
+        tasks = tasks.filter(t => t !== value);
         localStorage.setItem("tasks", JSON.stringify(tasks));
     };
 
-    newtask.appendChild(deletebtn);
+    li.appendChild(deletebtn);
+    document.getElementById("lists").appendChild(li);
 }
 
 
-//  Load tasks when page opens
+// load tasks on page load
 window.onload = function () {
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
     tasks.forEach(function (task) {
-        const li = document.createElement("li");
-        li.textContent = task;
-
-        deletetask(li);
-        document.getElementById("lists").appendChild(li);
+        createTaskElement(task);
     });
 };
