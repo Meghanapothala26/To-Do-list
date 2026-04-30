@@ -1,22 +1,58 @@
 function addtask() {
-    const newtask = document.createElement("li")
-    const list = document.getElementById("lists")   //to access the list in html  which is having id as list in ul in html
-  
-    newtask.textContent = document.getElementById("todo-task").value;  //to dipslay the task in the list
-    document.getElementById("todo-task").value = "";  //to clear the input field after adding the task
-    if(newtask.textContent===""){
-        alert("please enter a task")
+    const input = document.getElementById("todo-task");
+    const value = input.value;
+
+    // Check empty FIRST
+    if (value === "") {
+        alert("please enter a task");
         return;
     }
-      list.appendChild(newtask)
-    deletetask(newtask)
 
+    const newtask = document.createElement("li");
+    newtask.textContent = value;
+
+    const list = document.getElementById("lists");
+    list.appendChild(newtask);
+
+    // Save to localStorage
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(value);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    // Add delete button
+    deletetask(newtask);
+
+    // Clear input
+    input.value = "";
 }
+
+
 function deletetask(newtask) {
-    const deletebtn = document.createElement('button') //creating button for deleting task
-    deletebtn.textContent = "Delete"
-    newtask.appendChild(deletebtn);
-    deletebtn.onclick = function () { // function to delete the task when the button is clicked
+    const deletebtn = document.createElement("button");
+    deletebtn.textContent = "Delete";
+
+    deletebtn.onclick = function () {
         newtask.remove();
-    }
+
+        // Remove from localStorage
+        let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks = tasks.filter(t => t !== newtask.textContent);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    };
+
+    newtask.appendChild(deletebtn);
 }
+
+
+//  Load tasks when page opens
+window.onload = function () {
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    tasks.forEach(function (task) {
+        const li = document.createElement("li");
+        li.textContent = task;
+
+        deletetask(li);
+        document.getElementById("lists").appendChild(li);
+    });
+};
