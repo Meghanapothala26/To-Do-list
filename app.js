@@ -1,9 +1,14 @@
 function addtask() {
     const newtask = document.createElement("li")
     const list = document.getElementById("lists")   //to access the list in html  which is having id as list in ul in html
-    list.appendChild(newtask);
+  
     newtask.textContent = document.getElementById("todo-task").value;  //to dipslay the task in the list
     document.getElementById("todo-task").value = "";  //to clear the input field after adding the task
+    if(newtask.textContent===""){
+        alert("please enter a task")
+        return;
+    }
+      list.appendChild(newtask)
     deletetask(newtask)
 
 }
